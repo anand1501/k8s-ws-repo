@@ -1,0 +1,38 @@
+#ReplicaSet same as replicationController main diff is in rs we can use equality and set based both selector 
+#but in rc on equality based selector worked. 
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs
+spec:
+  replicas: 2
+  selector:
+    matchExpressions: #matchExpression is used for set based slector. A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
+    - key: dc
+      operator: In  #operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.
+      values:
+      - IN
+    - key: env
+      operator: In
+      values:
+      - dev
+    - key: app
+      operator: In
+      values:
+      - web
+    # matchLabels:  #machLabels used for equality based selector. matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+    #   dc: IN
+    #   env: test
+  template:
+    metadata:
+      name: "rspod1"
+      labels:
+        dc: IN
+        env: dev
+        app: web
+    spec:
+     containers:
+     - name: rsc1
+       image: "anand1501/apache-server-php:v1"
+       ports:
+       - containerPort: 80

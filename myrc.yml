@@ -1,0 +1,28 @@
+#Rc is mainly used for keep a track of the pod and if needed create same copy of pod called replica. 
+#you can increase and decrease the replicas as per your needs.
+#here labels & selectors is very usefull it help to track and filter the pod also help in increase and decrease the replicas.
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: "rc1"
+spec:
+  selector:
+    dc: IN
+    app: web
+    team: dev
+  replicas: 3
+  template:
+    metadata:
+      name: "rcpod1"
+      labels:
+        dc: IN
+        app: web
+        team: dev
+    spec:
+        containers:
+        - name: "rcc1"
+          image: "anand1501/apache-server-php:v1"
+          ports:
+          - containerPort: 80
+          
+      
