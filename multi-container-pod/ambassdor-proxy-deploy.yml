@@ -1,0 +1,25 @@
+#sidecar containers help to scrap logs from the application container and send to the centralise system
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+  name: ambassdor-proxy-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ambassdor-proxy-deploy
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: ambassdor-proxy-deploy
+    spec:
+      containers:
+      - image: curlimages/curl
+        name: proxy
+        command: ["sh","-c","while true; do curl http://localhost:80; sleep 2; done"]
+      - image: nginx
+        name: server
+        ports:
+        - containerPort: 80

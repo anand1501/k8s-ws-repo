@@ -1,0 +1,43 @@
+#sidecar containers help to scrap logs from the application container and send to the centralise system
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+  name: sidecar-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidecar-deploy
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: sidecar-deploy
+    spec:
+      volumes:
+      - name: sidecar-volume
+        emptyDir: {}
+      containers:
+      - image: busybox
+        name: busybox
+        command:
+        - sh
+        - -c
+        - |
+           while true; do 
+             echo "$(date) from linux app" >> /logs/app.log
+             sleep 2;
+           done
+        volumeMounts:
+        - name: sidecar-volume
+          mountPath: /logs
+      - image: busybox
+        name: log-shipper
+        command:
+        - sh
+        - -c
+        - tail -f /logs/app.log
+        volumeMounts:
+        - name: sidecar-volume
+          mountPath: /logs
