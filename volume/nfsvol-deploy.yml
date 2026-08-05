@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfsvoldeploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      name: nfsvolpod
+      labels:
+        app: web
+    spec:
+      volumes:
+      - name: nfspod-pvc
+        persistentVolumeClaim:
+          claimName: mypvc
+      containers:
+      - name: nfsvolc
+        image: anand1501/apache-server-php:v1
+        volumeMounts:
+        - name: nfspod-pvc
+          mountPath: /var/www/html
